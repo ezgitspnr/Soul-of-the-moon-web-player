@@ -1,0 +1,440 @@
+<!--
+  Soul of the moon
+  Copyright (C) 2026
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License
+  as published by the Free Software Foundation, either
+  version 3 of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see:
+  https://www.gnu.org/licenses/gpl-3.0.html
+-->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<title>Soul of the moon</title>
+<style>
+:root{--turq:#c5e1e2;--must:#e6cf98;--beige:#ece7df;--bg:#faf9f7;--ink:#3a3a3a;--muted:#787570}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+main{width:100%;max-width:520px}.hide{display:none!important}
+.m-bar{padding:18px 20px;border:1.5px solid var(--ink);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(58,58,58,.05)}
+.m-mini{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.m-title-wrap{flex:1;min-width:0;cursor:pointer}
+.m-now{font-size:1.3rem;font-style:italic;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-sub{font-size:.98rem;font-style:italic;color:var(--muted)}
+.m-ctrls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.m-icon{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:11px;padding:6px 10px;font-family:inherit;font-style:italic;font-size:1.05rem;cursor:pointer}
+.m-icon.play{background:var(--turq);font-weight:500;padding:6px 14px}
+.m-icon.active{background:var(--must)}.m-icon:hover{opacity:.85}
+.m-prog-row{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:.95rem;color:var(--muted)}
+.m-range{-webkit-appearance:none;width:100%;height:5px;background:var(--beige);border-radius:6px;outline:none;cursor:pointer;border:none;padding:0}
+.m-range:disabled{opacity:.55;cursor:default}
+.m-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--turq);border:1.5px solid var(--ink);cursor:pointer}
+.m-range::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--turq);border:1.5px solid var(--ink);cursor:pointer}
+.m-drawer{margin-top:16px;padding-top:14px;border-top:1px dashed #ccc7be}
+.m-pl-head{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.m-select{flex:1;min-width:130px;font-family:inherit;font-style:italic;font-size:1.08rem;padding:6px 10px;border:1px solid var(--ink);border-radius:11px;background:#fff;color:var(--ink)}
+.m-upload-lbl{display:inline-flex;align-items:center;justify-content:center;background:var(--turq);border:1px solid var(--ink);border-radius:11px;padding:6px 12px;font-size:1.05rem;font-style:italic;cursor:pointer}
+.m-warn{margin:8px 0;padding:8px 12px;border-radius:11px;background:#fbf4e4;border:1px solid var(--must);color:#6b531c;font-size:.98rem;font-style:italic}
+.m-tracks{max-height:280px;overflow-y:auto;margin:10px 0 0;padding:0;list-style:none;border-top:1px solid #efece6}
+.m-tracks li{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #f4f1ec;font-size:1.08rem;gap:8px;flex-wrap:wrap}
+.m-track-name{flex:1 1 130px;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-style:italic}
+.m-track-name.playing{font-weight:500;background:linear-gradient(transparent 60%,var(--must) 60%);padding:0 4px;border-radius:4px}
+.m-track-acts{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.m-tag-btn{border:1px solid #d5d0c7;background:#fff;border-radius:8px;padding:2px 7px;font-size:.86rem;font-family:inherit;font-style:italic;cursor:pointer;color:var(--ink)}
+.m-tag-btn:hover{border-color:var(--ink)}
+a.m-tag-btn{text-decoration:none;display:inline-block}
+.m-inline-edit{display:flex;gap:6px;margin-bottom:8px}
+.m-inline-edit input{flex:1;font-family:inherit;font-size:1.05rem;font-style:italic;padding:6px 10px;border-radius:11px;border:1px solid var(--ink);background:#fff;color:var(--ink)}
+.m-empty{padding:14px 4px 6px;text-align:center;font-style:italic;color:var(--muted)}
+.m-badge{font-size:.72rem;font-style:normal;padding:1px 6px;border-radius:8px;border:1px solid #d5d0c7;background:var(--beige);flex-shrink:0}
+.m-badge.sp{background:var(--turq)}
+.m-ext{margin-top:14px}
+.m-ext-note{font-size:.95rem;font-style:italic;color:var(--muted);margin-bottom:6px}
+.m-sp{width:100%;min-height:152px;border-radius:11px;overflow:hidden}
+.m-ext-open{display:inline-block;margin-top:6px;font-size:.98rem;font-style:italic;color:var(--ink)}
+.m-panel{margin:8px 0;padding:10px 12px;border:1px solid #d5d0c7;border-radius:12px;background:#fff}
+.m-panel h4{margin:0 0 6px;font-weight:500;font-style:italic;font-size:1.12rem}
+.m-note{font-size:.93rem;font-style:italic;color:var(--muted);margin:4px 0 8px;line-height:1.3}
+.m-field{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;font-size:.95rem;font-style:italic;color:var(--muted)}
+.m-field input{font-family:inherit;font-size:1.02rem;font-style:italic;padding:6px 10px;border:1px solid var(--ink);border-radius:11px;background:#fff;color:var(--ink);width:100%}
+.m-check{display:flex;gap:8px;align-items:center;font-size:1rem;font-style:italic;margin:4px 0 8px}
+.m-tools{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+@media(max-width:420px){body{padding:10px}.m-bar{padding:14px 12px}.m-now{font-size:1.12rem}}
+</style>
+</head>
+<body>
+<main>
+<section id="musicBox" class="m-bar" aria-label="Müzik Oynatıcı">
+  <div class="m-mini">
+    <div class="m-title-wrap" id="mTitleArea" title="Şarkı listesini aç/kapat">
+      <div class="m-now" id="mNowTitle">buralar dutluk</div>
+      <div class="m-sub" id="mNowSub">Listeyi açmak için sağdaki oka dokunun</div>
+    </div>
+    <div class="m-ctrls">
+      <button type="button" class="m-icon" id="mShuffle" title="Karışık">⇄</button>
+      <button type="button" class="m-icon" id="mRepeat" title="Tekrar">↻</button>
+      <button type="button" class="m-icon" id="mPrev" title="Önceki">‹‹</button>
+      <button type="button" class="m-icon play" id="mPlay">oynat</button>
+      <button type="button" class="m-icon" id="mNext" title="Sonraki">››</button>
+      <button type="button" class="m-icon" id="mArrowBtn" aria-expanded="false" title="Liste">▼</button>
+    </div>
+  </div>
+  <div class="m-prog-row">
+    <span id="mCurTime">00:00</span>
+    <input type="range" id="mSeek" class="m-range" min="0" max="0" value="0" step="0.1">
+    <span id="mDurTime">00:00</span>
+  </div>
+  <div id="mExt" class="m-ext hide">
+    <div id="mExtNote" class="m-ext-note"></div>
+    <div id="mSpWrap" class="m-sp hide"><div id="mSpHost"></div></div>
+    <a id="mExtOpen" class="m-ext-open hide" target="_blank" rel="noopener noreferrer">orijinali aç</a>
+  </div>
+  <div id="mDrawer" class="m-drawer hide">
+    <div class="m-pl-head">
+      <select id="mPlSelect" class="m-select"></select>
+      <button type="button" class="m-icon" id="mNewPlBtn">+ liste</button>
+      <button type="button" class="m-icon" id="mRenPlBtn">adlandır</button>
+      <button type="button" class="m-icon" id="mDelPlBtn">sil</button>
+      <label class="m-upload-lbl" for="mFileInp">+ dosya ekle
+        <input type="file" id="mFileInp" accept=".flac,.mp3,.wav,.ogg,.m4a,.aac,audio/*" multiple class="hide">
+      </label>
+    </div>
+    <div id="mPlInputBox" class="m-inline-edit hide">
+      <input type="text" id="mPlNameInp" maxlength="40" placeholder="liste adı...">
+      <button type="button" class="m-icon play" id="mPlSaveBtn">kaydet</button>
+      <button type="button" class="m-icon" id="mPlCancelBtn">iptal</button>
+    </div>
+    <div class="m-tools">
+      <button type="button" class="m-icon" id="mImpBtn">spotify içe aktar</button>
+      <button type="button" class="m-icon" id="mSetBtn">ayarlar</button>
+    </div>
+    <div id="mSetBox" class="m-panel hide">
+      <h4>Ayarlar</h4>
+      <div id="mEnvNote" class="m-note"></div>
+      <label class="m-field">Spotify Client ID (opsiyonel)<input type="text" id="mSetSpId" autocomplete="off" spellcheck="false"></label>
+      <label class="m-field">Spotify Redirect URI<input type="text" id="mSetSpRedir" autocomplete="off" spellcheck="false"></label>
+      <label class="m-check"><input type="checkbox" id="mSetDup"> yinelenen girdilere izin ver</label>
+      <div class="m-note">Client ID girmezseniz Spotify çalma listeleri <strong>gömülü oynatıcı</strong> olarak eklenir (30 sn önizleme; tarayıcıda Spotify oturumu açıksa tam parça). Client ID girip yetkilendirirseniz liste parça parça çekilir. file:// ile Spotify çalışmaz; http://127.0.0.1 veya HTTPS kullanın.</div>
+      <div class="m-inline-edit">
+        <button type="button" class="m-icon play" id="mSetSave">kaydet</button>
+        <button type="button" class="m-icon" id="mSetClear">temizle</button>
+        <button type="button" class="m-icon" id="mSetClose">kapat</button>
+      </div>
+    </div>
+    <div id="mImpBox" class="m-panel hide">
+      <h4>Spotify çalma listesi ekle</h4>
+      <div class="m-inline-edit">
+        <input type="text" id="mImpUrl" placeholder="https://open.spotify.com/playlist/..." autocomplete="off" spellcheck="false">
+        <button type="button" class="m-icon play" id="mImpGo">getir</button>
+      </div>
+      <div id="mImpStatus" class="m-note"></div>
+      <div id="mImpCommit" class="hide">
+        <label class="m-field">Hedef liste<select id="mImpTarget"></select></label>
+        <label class="m-field hide" id="mImpNameWrap">Yeni liste adı<input type="text" id="mImpName" maxlength="40"></label>
+        <div class="m-inline-edit">
+          <button type="button" class="m-icon play" id="mImpAdd">ekle</button>
+          <button type="button" class="m-icon" id="mImpCancel">vazgeç</button>
+        </div>
+      </div>
+    </div>
+    <div id="mWarn" class="m-warn hide" role="status" aria-live="polite"></div>
+    <ul id="mTrackList" class="m-tracks"></ul>
+  </div>
+</section>
+</main>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const DB_NAME='TekOdakMuzikDB',DB_VER=1,STORE='tracks',META_KEY='tekodak_muzik_meta_v1';
+const SET_KEY='tekodak_muzik_settings_v1',PKCE_KEY='tekodak_spotify_pkce_v1',TOKEN_KEY='tekodak_spotify_token_v1';
+const AUDIO_EXT=/\.(flac|mp3|wav|ogg|m4a|aac)$/i;
+const RE_SP_ID=/^[A-Za-z0-9]{22}$/;
+const RESTART_AFTER_SEC=3;
+
+let db=null;
+let tracksMap=new Map();
+let isSeeking=false,plEditMode=null,drawerOpen=false,isStorageLoaded=false,warned=false;
+let meta={playlists:[{id:'pl_default',name:'Soul of the moon',trackIds:[],items:[]}],activePlaylistId:'pl_default',shuffle:false,repeat:false,lastItemId:null};
+
+function fmt(s){if(!Number.isFinite(s)||s<0)return'00:00';const t=Math.floor(s),m=Math.floor(t/60),x=t%60;return String(m).padStart(2,'0')+':'+String(x).padStart(2,'0');}
+function newIid(){return'it_'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);}
+function warn(msg){const el=$('mWarn');if(!msg){el.classList.add('hide');el.textContent='';return;}el.textContent=msg;el.classList.remove('hide');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.add('hide'),6500);}
+function envInfo(){const file=location.protocol==='file:';return{file,http:/^https?:$/.test(location.protocol)};}
+function pageUrlNoQuery(){return /^https?:$/.test(location.protocol)?(location.origin+location.pathname):'';}
+
+function getSettings(){const d={spotifyClientId:'',spotifyRedirectUri:'',allowDuplicates:false};try{const r=localStorage.getItem(SET_KEY);if(r){const p=JSON.parse(r);if(p)Object.assign(d,p);}}catch(e){}return d;}
+function saveSettings(s){try{localStorage.setItem(SET_KEY,JSON.stringify(s));return true;}catch(e){return false;}}
+function validId(v){return /^[A-Za-z0-9]{32}$/.test(v)?'':'Client ID 32 karakter olmalı.';}
+function validRedirect(v){let u;try{u=new URL(v);}catch(e){return'Geçerli adres girin.';}if(u.hash)return'# içeremez.';const loop=u.hostname==='127.0.0.1'||u.hostname==='[::1]';if(u.protocol==='https:')return'';if(u.protocol==='http:'&&loop)return'';if(u.hostname==='localhost')return'localhost yerine 127.0.0.1 kullanın.';return'HTTPS veya http://127.0.0.1 olmalı.';}
+
+function migrate(){
+  meta.playlists.forEach(pl=>{
+    if(!Array.isArray(pl.trackIds))pl.trackIds=[];
+    pl.items=Array.isArray(pl.items)?pl.items.filter(x=>x&&typeof x==='object'&&typeof x.iid==='string'&&typeof x.src==='string'):[];
+    const have=new Set(pl.items.filter(x=>x.localId).map(x=>x.localId));
+    const iids=new Set(pl.items.map(x=>x.iid));
+    pl.trackIds.forEach(id=>{if(typeof id!=='string'||have.has(id))return;let iid='it_'+id;if(iids.has(iid))iid=newIid();pl.items.push({iid,src:'local',localId:id});iids.add(iid);have.add(id);});
+    syncIds(pl);
+  });
+}
+function syncIds(pl){const seen=new Set(),out=[];pl.items.forEach(x=>{if(x.localId&&!seen.has(x.localId)){seen.add(x.localId);out.push(x.localId);}});pl.trackIds=out;}
+function loadMeta(){try{const r=localStorage.getItem(META_KEY);if(r){const p=JSON.parse(r);if(p&&Array.isArray(p.playlists)&&p.playlists.length)meta=Object.assign(meta,p);}}catch(e){}migrate();}
+function saveMeta(){if(!isStorageLoaded)return;meta.playlists.forEach(syncIds);try{localStorage.setItem(META_KEY,JSON.stringify(meta));}catch(e){warn('Liste kaydedilemedi.');}}
+function activePl(){let p=meta.playlists.find(x=>x.id===meta.activePlaylistId);if(!p){p=meta.playlists[0];meta.activePlaylistId=p.id;}return p;}
+function findItem(iid){for(const pl of meta.playlists){const it=pl.items.find(x=>x.iid===iid);if(it)return{it,pl};}return null;}
+function isLocalAvailable(it){const r=it.localId&&tracksMap.get(it.localId);return!!(r&&r.blob);}
+function resolveItem(it){
+  if(it.src==='spotify_playlist'&&RE_SP_ID.test(it.extId||''))return{kind:'spotify_playlist',id:it.extId};
+  const loc=it.localId?tracksMap.get(it.localId):null;
+  const hasLocal=!!(loc&&loc.blob);
+  const ext=(it.src==='spotify'&&RE_SP_ID.test(it.extId||''))?{kind:'spotify',id:it.extId}:null;
+  if(it.src==='local')return hasLocal?{kind:'local',rec:loc}:null;
+  if(hasLocal&&(it.prefer!=='external'||!ext))return{kind:'local',rec:loc};
+  if(ext)return ext;
+  return null;
+}
+function extUrl(it){
+  if(it.src==='spotify'&&RE_SP_ID.test(it.extId||''))return'https://open.spotify.com/track/'+it.extId;
+  if(it.src==='spotify_playlist'&&RE_SP_ID.test(it.extId||''))return'https://open.spotify.com/playlist/'+it.extId;
+  return'';
+}
+function itemInfo(it){
+  if(it.src==='local'){const r=it.localId?tracksMap.get(it.localId):null;if(r){const s=r.name.split(/\s+[-–—]\s+/);if(s.length>=2&&!/^\d{1,3}$/.test(s[0].trim()))return{artist:s[0].trim(),title:s.slice(1).join(' - ').trim()};return{artist:'',title:r.name};}return{artist:it.artist||'',title:it.title||'Eksik dosya'};}
+  if(it.src==='spotify_playlist')return{artist:'Spotify',title:it.title||('Liste '+it.extId)};
+  return{artist:it.artist||'',title:it.title||'Adsız parça'};
+}
+function displayName(it){const i=itemInfo(it);return i.artist?i.artist+' — '+i.title:i.title;}
+function reconcile(){const used=new Set();meta.playlists.forEach(p=>p.items.forEach(x=>{if(x.localId)used.add(x.localId);}));const a=activePl();tracksMap.forEach((r,id)=>{if(!used.has(id)){a.items.push({iid:newIid(),src:'local',localId:id});used.add(id);}});}
+
+function openDB(){return new Promise(res=>{if(!window.indexedDB){res(null);return;}const done=d=>{db=d;if(db)db.onversionchange=()=>{try{db.close();}catch(e){}db=null;};res(db);};let r;try{r=indexedDB.open(DB_NAME,DB_VER);}catch(e){res(null);return;}r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id'});};r.onsuccess=e=>done(e.target.result);r.onerror=e=>{if(e&&e.preventDefault)e.preventDefault();res(null);};r.onblocked=()=>warn('Arşiv başka sekmede açık.');});}
+function dbPut(rec){return new Promise((res,rej)=>{if(!db){rej(new Error('no db'));return;}let tx;try{tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(rec);}catch(e){rej(e);return;}tx.oncomplete=()=>res(rec);tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error);});}
+function dbDel(id){return new Promise(res=>{if(!db){res();return;}let tx;try{tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);}catch(e){res();return;}tx.oncomplete=()=>res();tx.onerror=()=>res();});}
+function dbAll(){return new Promise(res=>{if(!db){res(null);return;}let tx,r;try{tx=db.transaction(STORE,'readonly');r=tx.objectStore(STORE).getAll();}catch(e){res(null);return;}r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res(null);});}
+async function loadTracks(){const all=await dbAll();if(!all)return;all.forEach(v=>{if(v&&v.id&&v.blob)tracksMap.set(v.id,{id:v.id,name:v.name||'Adsız',type:v.type||'',size:v.size||0,blob:v.blob});});}
+
+/* ---------------- Spotify (embed + isteğe bağlı API) ---------------- */
+const SPE={c:null,api:null,loading:null,ready:false,sid:0,uri:'',pos:0,dur:0,playing:false,got:false,endFired:false,guard:null,wantPlay:false};
+function spApiLoad(){if(SPE.api)return Promise.resolve(SPE.api);if(SPE.loading)return SPE.loading;SPE.loading=new Promise((res,rej)=>{const t=setTimeout(()=>{SPE.loading=null;rej(new Error('timeout'));},12000);window.onSpotifyIframeApiReady=api=>{clearTimeout(t);SPE.api=api;res(api);};const s=document.createElement('script');s.src='https://open.spotify.com/embed/iframe-api/v1';s.async=true;s.onerror=()=>{clearTimeout(t);SPE.loading=null;rej(new Error('network'));};document.head.appendChild(s);});return SPE.loading;}
+function spOnUpdate(e){const d=e&&e.data;if(!d||SPE.sid!==P.session||(P.kind!=='spotify'&&P.kind!=='spotify_playlist'))return;if(P.kind==='spotify'&&d.playingURI&&d.playingURI!==SPE.uri)return;clearTimeout(SPE.guard);SPE.got=true;P.status='';SPE.pos=Number(d.position)||0;SPE.dur=Number(d.duration)||0;SPE.playing=!d.isPaused;if(SPE.dur>0&&SPE.pos<SPE.dur-2000)SPE.endFired=false;if(SPE.dur>0&&SPE.pos>=SPE.dur-300&&d.isPaused&&!SPE.endFired){SPE.endFired=true;SPE.playing=false;updatePlayBtn();onEnded();return;}renderNow();updatePlayBtn();renderProgress();}
+function spLoad(id,sid,isPlaylist){P.status='Spotify yükleniyor…';const uri=(isPlaylist?'spotify:playlist:':'spotify:track:')+id;SPE.sid=sid;SPE.uri=uri;SPE.pos=0;SPE.dur=0;SPE.playing=false;SPE.got=false;SPE.endFired=false;SPE.wantPlay=true;clearTimeout(SPE.guard);SPE.guard=setTimeout(()=>{if(SPE.sid===P.session&&!SPE.got)extFail(sid,'Spotify oynatıcısı yanıt vermedi.');},20000);spApiLoad().then(api=>{if(sid!==P.session)return;if(!SPE.c){api.createController($('mSpHost'),{uri,width:'100%',height:152},ctrl=>{SPE.c=ctrl;ctrl.addListener('ready',()=>{SPE.ready=true;if(SPE.wantPlay&&SPE.sid===P.session){SPE.wantPlay=false;try{ctrl.play();}catch(e){}}});ctrl.addListener('playback_update',spOnUpdate);});}else{try{SPE.c.loadUri(uri);SPE.wantPlay=false;SPE.c.play();}catch(e){extFail(sid,'Spotify başlatılamadı.');}}}).catch(()=>extFail(sid,'Spotify yüklenemedi.'));}
+function spStop(){clearTimeout(SPE.guard);SPE.sid=0;SPE.playing=false;SPE.got=false;SPE.wantPlay=false;if(SPE.c){try{SPE.c.pause();}catch(e){}}}
+
+/* ---------------- Oynatma durumu ---------------- */
+const audio=new Audio();audio.preload='auto';
+const P={session:0,itemId:null,kind:null,url:null,pendingPlay:false,queue:[],qi:-1,queueKey:'',status:'',chain:false,errStreak:0};
+
+function showExt(kind,it){$('mExt').classList.remove('hide');$('mSpWrap').classList.toggle('hide',kind!=='spotify'&&kind!=='spotify_playlist');$('mExtNote').textContent=kind==='spotify'?'Spotify gömülü oynatıcı (30 sn önizleme / giriş yapılmışsa tam).':'Spotify çalma listesi gömülü oynatıcı. Liste sırasıyla çalar.';const a=$('mExtOpen'),u=it?extUrl(it):'';if(u){a.href=u;a.classList.remove('hide');}else{a.removeAttribute('href');a.classList.add('hide');}}
+function hideExt(){$('mExt').classList.add('hide');}
+function extFail(sid,msg){if(sid!==P.session)return;P.status='Oynatılamadı';warn(msg);renderNow();updatePlayBtn();renderProgress();maybeSkip(sid);}
+function maybeSkip(sid){if(!P.chain||P.errStreak>=5||P.queue.length<2)return;P.errStreak++;setTimeout(()=>{if(sid===P.session)playNext(true);},1500);}
+function userErr(m){const e=new Error(m);e.userMessage=m;return e;}
+function isLocalActive(){return P.kind==='local'&&P.url!==null&&audio.src===P.url;}
+function stopAll(){if(P.url){try{audio.pause();}catch(e){}audio.removeAttribute('src');try{audio.load();}catch(e){}URL.revokeObjectURL(P.url);P.url=null;}spStop();}
+
+function shuffled(ids,first){const a=ids.filter(x=>x!==first);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return(first!==null&&ids.includes(first))?[first].concat(a):a;}
+function playableIds(){return activePl().items.filter(x=>resolveItem(x)).map(x=>x.iid);}
+function ensureQueue(){const ids=playableIds();const key=activePl().id+'|'+(meta.shuffle?1:0)+'|'+ids.join(',');if(key===P.queueKey)return;P.queueKey=key;P.queue=meta.shuffle?shuffled(ids,P.itemId):ids.slice();P.qi=P.queue.indexOf(P.itemId);}
+function stepQueue(dir){ensureQueue();const q=P.queue;if(!q.length)return null;let i=P.qi+dir;if(i>=q.length){if(meta.shuffle&&q.length>1){const nq=shuffled(playableIds(),null);if(nq[0]===q[q.length-1]){[nq[0],nq[1]]=[nq[1],nq[0]];}P.queue=nq;}i=0;}else if(i<0)i=q.length-1;return P.queue[i];}
+
+function selectItem(iid,autoPlay,opts){opts=opts||{};const f=findItem(iid);if(!f){warn('Parça bulunamadı.');return;}const it=f.it,res=resolveItem(it);const sid=++P.session;stopAll();P.itemId=iid;P.kind=null;P.status='';P.pendingPlay=false;P.chain=!!opts.chain;if(!opts.chain)P.errStreak=0;meta.lastItemId=iid;saveMeta();ensureQueue();P.qi=P.queue.indexOf(iid);resetProgress();hideExt();
+  if(!res){P.status='Kaynak yok';warn('"'+displayName(it)+'" için çalınabilir kaynak yok.');maybeSkip(sid);}
+  else if(res.kind==='local'){P.kind='local';P.pendingPlay=!!autoPlay;const url=URL.createObjectURL(res.rec.blob);P.url=url;audio.src=url;try{audio.load();}catch(e){}if(autoPlay){const pr=audio.play();if(pr&&pr.then)pr.then(()=>{if(P.url===url)P.pendingPlay=false;updatePlayBtn();},err=>{if(P.url===url)playErr(err);});else P.pendingPlay=false;}}
+  else if(autoPlay){P.kind=res.kind;showExt(res.kind,it);if(res.kind==='spotify')spLoad(res.id,sid,false);else if(res.kind==='spotify_playlist')spLoad(res.id,sid,true);}
+  renderNow();renderList();updateMediaSession(it);updatePlayBtn();
+}
+function playErr(err){if(err&&err.name==='AbortError')return;P.pendingPlay=false;P.status='Hata';warn('Oynatma başlatılamadı'+(err&&err.name?' ('+err.name+')':'')+'.');renderNow();updatePlayBtn();}
+function playNext(chain){const id=stepQueue(1);if(id)selectItem(id,true,{chain:!!chain});}
+function playPrev(){if(isLocalActive()&&audio.currentTime>RESTART_AFTER_SEC){audio.currentTime=0;renderProgress();return;}const id=stepQueue(-1);if(id)selectItem(id,true);}
+function onEnded(){if(meta.repeat){repeatCurrent();return;}playNext(true);}
+function repeatCurrent(){if(P.kind==='local'&&isLocalActive()){audio.currentTime=0;audio.play().catch(playErr);}else if((P.kind==='spotify'||P.kind==='spotify_playlist')&&SPE.c){SPE.endFired=false;try{SPE.c.seek(0);SPE.c.play();}catch(e){}}}
+function isPlayingNow(){if(P.kind==='local')return isLocalActive()&&!audio.paused;if(P.kind==='spotify'||P.kind==='spotify_playlist')return SPE.sid===P.session&&SPE.got&&SPE.playing;return false;}
+function updatePlayBtn(){$('mPlay').textContent=(isPlayingNow()||(P.kind==='local'&&P.pendingPlay))?'duraklat':'oynat';}
+function togglePlay(){
+  if(!P.itemId){ensureQueue();const ids=playableIds();if(ids.length)selectItem(ids[0],true);else{setDrawer(true);warn('lütfen dosya ekleyin');}return;}
+  if(P.kind==='local'){if(!isLocalActive()){selectItem(P.itemId,true);return;}if(audio.paused){P.pendingPlay=false;audio.play().catch(playErr);}else audio.pause();updatePlayBtn();return;}
+  if((P.kind==='spotify'||P.kind==='spotify_playlist')&&SPE.c&&SPE.sid===P.session&&SPE.got){try{SPE.c.togglePlay();}catch(e){}return;}
+  selectItem(P.itemId,true);
+}
+['loadedmetadata','durationchange','timeupdate','seeking','seeked'].forEach(ev=>audio.addEventListener(ev,()=>{if(isLocalActive())renderProgress();}));
+audio.addEventListener('play',()=>{if(isLocalActive())updatePlayBtn();});
+audio.addEventListener('pause',()=>{if(isLocalActive())updatePlayBtn();});
+audio.addEventListener('ended',()=>{if(isLocalActive())onEnded();});
+audio.addEventListener('error',()=>{if(!isLocalActive()||!audio.error||audio.error.code===1)return;P.pendingPlay=false;P.status='Hata';warn('Ses dosyası okunamadı.');renderNow();updatePlayBtn();maybeSkip(P.session);});
+
+function resetProgress(){isSeeking=false;const s=$('mSeek');s.min='0';s.max='0';s.value='0';s.disabled=true;$('mCurTime').textContent='00:00';$('mDurTime').textContent='00:00';}
+function getProgress(){if(P.kind==='local'){if(!isLocalActive())return null;return{dur:audio.duration,cur:audio.currentTime,seekable:true};}if(P.kind==='spotify'||P.kind==='spotify_playlist'){if(SPE.sid!==P.session||!SPE.got)return null;return{dur:SPE.dur/1000,cur:SPE.pos/1000,seekable:false};}return null;}
+function renderProgress(){const pr=getProgress();if(!pr)return;const dur=pr.dur,ok=Number.isFinite(dur)&&dur>0;const cur=Number.isFinite(pr.cur)&&pr.cur>0?pr.cur:0;const s=$('mSeek');if(ok){if(s.max!==String(dur))s.max=String(dur);s.disabled=!pr.seekable;$('mDurTime').textContent=fmt(dur);}else{s.max='0';s.disabled=true;$('mDurTime').textContent='--:--';}if(!isSeeking){const shown=ok?Math.min(cur,dur):cur;$('mCurTime').textContent=fmt(shown);s.value=ok?String(shown):'0';}}
+function commitSeek(){const v=Number($('mSeek').value)||0;const pr=getProgress();if(pr&&pr.seekable&&Number.isFinite(pr.dur)&&pr.dur>0){const t=Math.min(Math.max(0,v),pr.dur);try{audio.currentTime=t;}catch(e){}}isSeeking=false;renderProgress();}
+
+function updateMediaSession(it){try{if(!('mediaSession' in navigator)||typeof MediaMetadata==='undefined')return;const i=itemInfo(it);navigator.mediaSession.metadata=new MediaMetadata({title:i.title,artist:i.artist||activePl().name});}catch(e){}}
+(function initMS(){if(!('mediaSession' in navigator))return;const set=(a,fn)=>{try{navigator.mediaSession.setActionHandler(a,fn);}catch(e){}};set('play',()=>{if(!isPlayingNow())togglePlay();});set('pause',()=>{if(isPlayingNow())togglePlay();});set('previoustrack',playPrev);set('nexttrack',()=>playNext());})();
+
+function setDrawer(open){drawerOpen=!!open;$('mDrawer').classList.toggle('hide',!drawerOpen);$('mArrowBtn').textContent=drawerOpen?'▲':'▼';$('mArrowBtn').setAttribute('aria-expanded',String(drawerOpen));}
+function renderNow(){const pl=activePl(),f=P.itemId?findItem(P.itemId):null;let title,sub;if(f){const i=itemInfo(f.it);title=i.title;sub=P.status||(i.artist?i.artist+' · '+pl.name:pl.name);}else{const first=pl.items.filter(x=>resolveItem(x))[0];title=first?itemInfo(first).title:'buralar dutluk';sub=P.status||pl.name;}$('mNowTitle').textContent=title;$('mNowSub').textContent=sub;$('mShuffle').classList.toggle('active',!!meta.shuffle);$('mRepeat').classList.toggle('active',!!meta.repeat);}
+function mkBtn(label,act,title,disabled){const b=document.createElement('button');b.type='button';b.className='m-tag-btn';b.textContent=label;b.dataset.act=act;if(title){b.title=title;}if(disabled)b.disabled=true;return b;}
+function renderList(){
+  const pl=activePl();const sel=$('mPlSelect');sel.innerHTML='';meta.playlists.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.selected=p.id===pl.id;sel.appendChild(o);});
+  const ul=$('mTrackList');ul.innerHTML='';if(!pl.items.length){const li=document.createElement('li');li.className='m-empty';li.textContent='lütfen dosya ekleyin';ul.appendChild(li);return;}
+  pl.items.forEach((it,idx)=>{
+    const res=resolveItem(it);const li=document.createElement('li');li.dataset.iid=it.iid;
+    if(it.src==='spotify'||it.src==='spotify_playlist'){const b=document.createElement('span');b.className='m-badge sp';b.textContent=it.src==='spotify_playlist'?'Spotify liste':'Spotify';li.appendChild(b);}
+    if(isLocalAvailable(it)&&it.src!=='local'){const b=document.createElement('span');b.className='m-badge';b.textContent='yerel';li.appendChild(b);}
+    const name=document.createElement('span');name.className='m-track-name'+(it.iid===P.itemId?' playing':'');name.tabIndex=0;const dn=displayName(it);name.textContent=dn;name.title=dn+(res?'':' (çalınabilir kaynak yok)');name.dataset.act='play';
+    const acts=document.createElement('div');acts.className='m-track-acts';
+    const u=extUrl(it);if(u){const a=document.createElement('a');a.className='m-tag-btn';a.href=u;a.target='_blank';a.rel='noopener noreferrer';a.textContent='aç';acts.appendChild(a);}
+    acts.appendChild(mkBtn('↑','up','Yukarı',idx===0));acts.appendChild(mkBtn('↓','down','Aşağı',idx===pl.items.length-1));
+    if(meta.playlists.length>1)acts.appendChild(mkBtn('taşı','move','Sonraki listeye'));
+    acts.appendChild(mkBtn('sil','del','Kaldır'));
+    li.appendChild(name);li.appendChild(acts);ul.appendChild(li);
+  });
+}
+function renderAll(){renderNow();renderList();updatePlayBtn();}
+
+function stopCurrentIfMissing(){if(P.itemId&&!findItem(P.itemId)){P.session++;P.itemId=null;P.kind=null;P.pendingPlay=false;P.status='';stopAll();hideExt();resetProgress();updatePlayBtn();}}
+async function removeItem(pl,it){const lid=it.localId;const usedElsewhere=!!lid&&meta.playlists.some(p=>p.items.some(x=>x!==it&&x.localId===lid));if(it.src==='local'&&lid&&!usedElsewhere){if(!window.confirm('"'+displayName(it)+'" dosyası arşivden silinecek. Emin misiniz?'))return;meta.playlists.forEach(p=>{p.items=p.items.filter(x=>!(x.localId===lid&&x.src==='local'));p.items.forEach(x=>{if(x.localId===lid){delete x.localId;x.prefer='external';}});});tracksMap.delete(lid);await dbDel(lid);}else if(it.src==='spotify_playlist'||it.src==='spotify'){pl.items=pl.items.filter(x=>x!==it);}else{pl.items=pl.items.filter(x=>x!==it);}saveMeta();stopCurrentIfMissing();renderAll();}
+
+$('mTrackList').addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;const li=t.closest('li[data-iid]');if(!li)return;const pl=activePl();const idx=pl.items.findIndex(x=>x.iid===li.dataset.iid);if(idx<0)return;const it=pl.items[idx];const act=t.dataset.act;
+  if(act==='play')selectItem(it.iid,true);
+  else if(act==='up'&&idx>0){[pl.items[idx-1],pl.items[idx]]=[pl.items[idx],pl.items[idx-1]];saveMeta();renderList();}
+  else if(act==='down'&&idx<pl.items.length-1){[pl.items[idx+1],pl.items[idx]]=[pl.items[idx],pl.items[idx+1]];saveMeta();renderList();}
+  else if(act==='move'){const pi=meta.playlists.findIndex(p=>p.id===pl.id),target=meta.playlists[(pi+1)%meta.playlists.length];pl.items.splice(idx,1);target.items.push(it);saveMeta();renderAll();warn('"'+target.name+'" listesine taşındı.');}
+  else if(act==='del')removeItem(pl,it);
+});
+$('mTrackList').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('m-track-name')){e.preventDefault();e.target.click();}});
+
+const seek=$('mSeek');seek.addEventListener('pointerdown',()=>{isSeeking=true;});seek.addEventListener('input',()=>{isSeeking=true;$('mCurTime').textContent=fmt(Number(seek.value)||0);});seek.addEventListener('change',commitSeek);window.addEventListener('pointerup',()=>{if(isSeeking)commitSeek();});
+
+$('mTitleArea').addEventListener('click',()=>setDrawer(!drawerOpen));
+$('mArrowBtn').addEventListener('click',()=>setDrawer(!drawerOpen));
+$('mPlay').addEventListener('click',togglePlay);
+$('mNext').addEventListener('click',()=>playNext());
+$('mPrev').addEventListener('click',playPrev);
+$('mShuffle').addEventListener('click',()=>{meta.shuffle=!meta.shuffle;saveMeta();P.queueKey='';ensureQueue();renderNow();});
+$('mRepeat').addEventListener('click',()=>{meta.repeat=!meta.repeat;saveMeta();renderNow();});
+$('mPlSelect').addEventListener('change',e=>{meta.activePlaylistId=e.target.value;saveMeta();renderAll();});
+$('mNewPlBtn').addEventListener('click',()=>{plEditMode='new';$('mPlNameInp').value='';$('mPlInputBox').classList.remove('hide');$('mPlNameInp').focus();});
+$('mRenPlBtn').addEventListener('click',()=>{plEditMode='rename';$('mPlNameInp').value=activePl().name;$('mPlInputBox').classList.remove('hide');$('mPlNameInp').focus();});
+$('mDelPlBtn').addEventListener('click',()=>{if(meta.playlists.length<=1){warn('En az bir liste kalmalı.');return;}const pl=activePl();if(!window.confirm('"'+pl.name+'" silinsin mi? Yerel dosyalar arşivden silinmez.'))return;const rest=meta.playlists.filter(p=>p.id!==pl.id);const others=new Set();rest.forEach(p=>p.items.forEach(x=>{if(x.localId)others.add(x.localId);}));const moved=new Set();pl.items.forEach(x=>{if(x.localId&&!others.has(x.localId)&&!moved.has(x.localId)&&tracksMap.has(x.localId)){moved.add(x.localId);rest[0].items.push({iid:newIid(),src:'local',localId:x.localId});}});meta.playlists=rest;meta.activePlaylistId=rest[0].id;saveMeta();stopCurrentIfMissing();renderAll();if(moved.size)warn(moved.size+' dosya "'+rest[0].name+'" listesine aktarıldı.');});
+$('mPlSaveBtn').addEventListener('click',()=>{const v=$('mPlNameInp').value.trim();if(!v){warn('Liste adı girin.');return;}if(plEditMode==='new'){const p={id:'pl_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:v,trackIds:[],items:[]};meta.playlists.push(p);meta.activePlaylistId=p.id;}else if(plEditMode==='rename')activePl().name=v;plEditMode=null;$('mPlInputBox').classList.add('hide');saveMeta();renderAll();});
+$('mPlCancelBtn').addEventListener('click',()=>{plEditMode=null;$('mPlInputBox').classList.add('hide');});
+$('mPlNameInp').addEventListener('keydown',e=>{if(e.key==='Enter')$('mPlSaveBtn').click();if(e.key==='Escape')$('mPlCancelBtn').click();});
+
+$('mFileInp').addEventListener('change',async e=>{
+  const files=Array.from(e.target.files||[]);if(!files.length)return;
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});}catch(x){}
+  const pl=activePl();let added=0,firstIid=null,skipped=0,failed=0;
+  for(const file of files){
+    if(!AUDIO_EXT.test(file.name)&&!/^audio\//.test(file.type)){skipped++;continue;}
+    const name=file.name.replace(/\.[^/.]+$/,'');const id='trk_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    const rec={id,name,type:file.type||'application/octet-stream',size:file.size,blob:file};
+    try{if(db){await dbPut(rec);}else if(!warned){warned=true;warn('Kalıcı depolama yok: dosyalar yalnızca bu oturumda kalır.');}tracksMap.set(id,rec);const item={iid:newIid(),src:'local',localId:id};pl.items.push(item);if(!firstIid)firstIid=item.iid;added++;}catch(err){failed++;}
+  }
+  e.target.value='';saveMeta();renderAll();
+  if(failed)warn(failed+' dosya kaydedilemedi (depolama dolu olabilir).');
+  else if(skipped&&!added)warn('Desteklenen: FLAC, MP3, WAV, OGG, M4A, AAC.');
+  if(added&&!P.itemId&&firstIid)selectItem(firstIid,false);
+});
+
+/* ---------------- Ayarlar ---------------- */
+function envNote(){const e=envInfo();if(e.file)return'file:// ile açıldı: yerel müzik çalışır, Spotify çalışmaz. Sayfayı http://127.0.0.1:PORT ile açın.';return'Geçerli adres: '+pageUrlNoQuery();}
+function openSettings(){const s=getSettings();$('mSetSpId').value=s.spotifyClientId;$('mSetSpRedir').value=s.spotifyRedirectUri;$('mSetSpRedir').placeholder=pageUrlNoQuery()||'https://ornek.com/Soul_of_the_moon.html';$('mSetDup').checked=!!s.allowDuplicates;$('mEnvNote').textContent=envNote();$('mSetBox').classList.remove('hide');$('mImpBox').classList.add('hide');}
+$('mSetBtn').addEventListener('click',()=>{if($('mSetBox').classList.contains('hide'))openSettings();else $('mSetBox').classList.add('hide');});
+$('mSetClose').addEventListener('click',()=>$('mSetBox').classList.add('hide'));
+$('mSetSave').addEventListener('click',()=>{const cur=getSettings();const id=$('mSetSpId').value.trim(),redir=$('mSetSpRedir').value.trim();const e1=id?validId(id):'',e2=redir?validRedirect(redir):'';if(e1||e2){warn('Hatalı alan: '+(e1||e2));return;}const next=Object.assign(cur,{spotifyClientId:id,spotifyRedirectUri:redir,allowDuplicates:$('mSetDup').checked});if(saveSettings(next))warn('Ayarlar kaydedildi.');else warn('Kaydedilemedi.');});
+$('mSetClear').addEventListener('click',()=>{if(!window.confirm('API ayarları ve Spotify oturumu silinsin mi? (Arşiv ve listeler etkilenmez.)'))return;try{localStorage.removeItem(SET_KEY);localStorage.removeItem(TOKEN_KEY);localStorage.removeItem(PKCE_KEY);}catch(e){}openSettings();warn('Ayarlar temizlendi.');});
+
+/* ---------------- Spotify içe aktarma ---------------- */
+const IMP={items:[],src:null,name:'',skipped:0};
+function setImpStatus(msg,err){const el=$('mImpStatus');el.textContent=msg||'';el.style.color=err?'#8a3b2d':'';}
+function parsePlaylistUrl(raw){const s=String(raw||'').trim();if(!s)return{error:'Spotify çalma listesi bağlantısı yapıştırın.'};let m=s.match(/^spotify:playlist:([A-Za-z0-9]{22})$/);if(m)return{src:'spotify',id:m[1]};let u;try{u=new URL(s);}catch(e){return{error:'Geçerli bağlantı değil.'};}if(u.protocol!=='https:'&&u.protocol!=='http:')return{error:'Geçerli bağlantı değil.'};const host=u.hostname.replace(/^www\./,'');if(host==='open.spotify.com'||host==='play.spotify.com'){m=u.pathname.match(/\/playlist\/([A-Za-z0-9]{22})(?:\/|$)/);if(m)return{src:'spotify',id:m[1]};return{error:'…/playlist/KİMLİK biçiminde olmalı.'};}return{error:'Yalnızca Spotify çalma listesi bağlantıları desteklenir.'};}
+function randStr(n){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';const a=new Uint8Array(n);crypto.getRandomValues(a);let s='';for(let i=0;i<n;i++)s+=c[a[i]%c.length];return s;}
+function b64url(buf){let s='';new Uint8Array(buf).forEach(b=>{s+=String.fromCharCode(b);});return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function readToken(){try{const t=JSON.parse(localStorage.getItem(TOKEN_KEY));return t&&t.access_token?t:null;}catch(e){return null;}}
+function storeToken(j,old){const t={access_token:j.access_token,refresh_token:j.refresh_token||(old&&old.refresh_token)||'',expires_at:Date.now()+(Number(j.expires_in)||3600)*1000};try{localStorage.setItem(TOKEN_KEY,JSON.stringify(t));}catch(e){}return t;}
+async function tokenReq(params){let res;try{res=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(params).toString()});}catch(e){throw userErr('Ağ hatası: Spotify yetkilendirmeye ulaşılamadı.');}let j=null;try{j=await res.json();}catch(e){}if(!res.ok)throw userErr('Spotify belirteç hatası: '+((j&&(j.error_description||j.error))||res.status));return j;}
+async function spToken(force){const t=readToken();if(!t)return null;if(!force&&t.expires_at-60000>Date.now())return t.access_token;if(!t.refresh_token){try{localStorage.removeItem(TOKEN_KEY);}catch(e){}return null;}try{const j=await tokenReq({grant_type:'refresh_token',refresh_token:t.refresh_token,client_id:getSettings().spotifyClientId});return storeToken(j,t).access_token;}catch(e){try{localStorage.removeItem(TOKEN_KEY);}catch(x){}return null;}}
+async function spStartAuth(playlistId){const s=getSettings();const redirect=s.spotifyRedirectUri||pageUrlNoQuery();const rerr=validRedirect(redirect);if(rerr)throw userErr('Redirect URI geçersiz: '+rerr);if(redirect!==pageUrlNoQuery())throw userErr('Redirect URI bu sayfanın adresiyle aynı olmalı: '+pageUrlNoQuery());if(!window.crypto||!crypto.subtle)throw userErr('PKCE için HTTPS veya http://127.0.0.1 gerekir.');const verifier=randStr(96),state=randStr(32);const challenge=b64url(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier)));try{localStorage.setItem(PKCE_KEY,JSON.stringify({verifier,state,playlistId,redirectUri:redirect,clientId:s.spotifyClientId,ts:Date.now()}));}catch(e){throw userErr('Yetkilendirme bilgisi saklanamadı.');}const q=new URLSearchParams({client_id:s.spotifyClientId,response_type:'code',redirect_uri:redirect,state,scope:'playlist-read-private playlist-read-collaborative',code_challenge_method:'S256',code_challenge:challenge});location.href='https://accounts.spotify.com/authorize?'+q.toString();}
+function takeSpotifyCallback(){const q=new URLSearchParams(location.search);if(!q.has('state')||!(q.has('code')||q.has('error')))return null;const cb={code:q.get('code'),error:q.get('error'),state:q.get('state')};try{history.replaceState(null,'',location.pathname+location.hash);}catch(e){}return cb;}
+async function finishSpotifyCallback(cb){openImport();let pk=null;try{pk=JSON.parse(localStorage.getItem(PKCE_KEY));}catch(e){}try{localStorage.removeItem(PKCE_KEY);}catch(e){}if(!pk||!pk.verifier){setImpStatus('Spotify oturumu bulunamadı; tekrar deneyin.',true);return;}if(pk.playlistId)$('mImpUrl').value='https://open.spotify.com/playlist/'+pk.playlistId;if(cb.state!==pk.state){setImpStatus('Güvenlik doğrulaması (state) başarısız.',true);return;}if(cb.error){setImpStatus(cb.error==='access_denied'?'Spotify yetkilendirmesi reddedildi.':'Spotify hatası: '+cb.error,true);return;}try{setImpStatus('Spotify oturumu tamamlanıyor…');const j=await tokenReq({grant_type:'authorization_code',code:cb.code,redirect_uri:pk.redirectUri,client_id:pk.clientId,code_verifier:pk.verifier});storeToken(j,null);await runImport();}catch(e){setImpStatus(e.userMessage||('Spotify oturumu açılamadı: '+e.message),true);}}
+async function spApi(url,st){st=st||{n429:0,n401:0};const token=await spToken();if(!token)throw userErr('Spotify oturumu yok; "getir"e tekrar basın.');let res;try{res=await fetch(url,{headers:{Authorization:'Bearer '+token}});}catch(e){throw userErr('Ağ hatası: Spotify\'a ulaşılamadı.');}if(res.status===429){if(st.n429>=4)throw userErr('Spotify istek sınırı aşıldı.');st.n429++;const ra=Math.min(30,Math.max(1,parseInt(res.headers.get('Retry-After')||'2',10)||2));setImpStatus('Spotify istek sınırı: '+ra+' sn…');await new Promise(r=>setTimeout(r,ra*1000));return spApi(url,st);}if(res.status===401){if(st.n401>=1){try{localStorage.removeItem(TOKEN_KEY);}catch(e){}throw userErr('Spotify oturumu geçersiz.');}st.n401++;await spToken(true);return spApi(url,st);}if(res.status===403)throw userErr('Spotify bu listeye erişimi reddetti (yalnızca kendi/ortak listeler).');if(res.status===404)throw userErr('Liste bulunamadı (özel veya silinmiş).');if(!res.ok)throw userErr('Spotify hatası ('+res.status+').');return res.json();}
+async function fetchSpotify(id){const out=[];let skipped=0,page=0,name='';try{const j=await spApi('https://api.spotify.com/v1/playlists/'+id+'?fields=name');name=(j&&j.name)||'';}catch(e){if(e&&/oturum|Ağ|sınırı/.test(e.userMessage||''))throw e;}let url='https://api.spotify.com/v1/playlists/'+id+'/items?limit=50';while(url&&page<250){const j=await spApi(url);page++;(j.items||[]).forEach(row=>{const t=row&&row.item&&typeof row.item==='object'?row.item:(row&&row.track&&typeof row.track==='object'?row.track:null);if(!t||row.is_local||t.is_local||(t.type&&t.type!=='track')||!RE_SP_ID.test(t.id||'')){skipped++;return;}out.push({src:'spotify',title:String(t.name||'Adsız'),artist:(t.artists||[]).map(a=>a&&a.name).filter(Boolean).join(', '),extId:t.id});});setImpStatus('Spotify\'dan '+out.length+' parça…');let next=j.next||null;if(next){try{const nu=new URL(next);if(nu.origin!=='https://api.spotify.com')next=null;}catch(e){next=null;}}url=next;}return{items:out,skipped,name};}
+
+function openImport(){$('mImpBox').classList.remove('hide');$('mSetBox').classList.add('hide');if(!drawerOpen)setDrawer(true);}
+function resetReview(){$('mImpCommit').classList.add('hide');$('mImpStatus').textContent='';}
+async function runImport(){
+  const parsed=parsePlaylistUrl($('mImpUrl').value);if(parsed.error){setImpStatus(parsed.error,true);return;}
+  resetReview();
+  try{
+    const s=getSettings();const env=envInfo();
+    if(env.file||!env.http)throw userErr('Spotify file:// ile çalışmaz. http://127.0.0.1 veya HTTPS kullanın.');
+    let token=null;
+    if(s.spotifyClientId&&!validId(s.spotifyClientId)){token=await spToken();if(!token){setImpStatus('Spotify yetkilendirmesine yönlendiriliyorsunuz…');await spStartAuth(parsed.id);return;}}
+    if(token){
+      setImpStatus('Spotify listesi çekiliyor…');
+      const r=await fetchSpotify(parsed.id);
+      if(!r.items.length)throw userErr('Listede çalınabilir parça yok.');
+      IMP.items=r.items;IMP.src='spotify';IMP.name=r.name||('Spotify listesi');IMP.skipped=r.skipped;IMP.token=true;
+      fillTarget();
+    }else{
+      setImpStatus('Spotify listesi gömülü oynatıcı olarak eklenecek.');
+      IMP.items=[{src:'spotify_playlist',extId:parsed.id,title:'Spotify listesi '+parsed.id,artist:''}];
+      IMP.src='spotify_playlist';IMP.name=IMP.items[0].title;IMP.skipped=0;IMP.token=false;
+      fillTarget();
+    }
+  }catch(e){setImpStatus(e&&e.userMessage?e.userMessage:'İçe aktarma başarısız: '+((e&&e.message)||e),true);}
+}
+function fillTarget(){const tg=$('mImpTarget');tg.innerHTML='';const o=document.createElement('option');o.value='new';o.textContent='yeni liste oluştur';tg.appendChild(o);meta.playlists.forEach(p=>{const x=document.createElement('option');x.value=p.id;x.textContent='mevcut: '+p.name;tg.appendChild(x);});$('mImpName').value=IMP.name||'İçe aktarılan liste';$('mImpNameWrap').classList.remove('hide');$('mImpCommit').classList.remove('hide');}
+$('mImpTarget').addEventListener('change',()=>{$('mImpNameWrap').classList.toggle('hide',$('mImpTarget').value!=='new');});
+$('mImpBtn').addEventListener('click',()=>{if($('mImpBox').classList.contains('hide'))openImport();else $('mImpBox').classList.add('hide');});
+$('mImpGo').addEventListener('click',runImport);
+$('mImpUrl').addEventListener('keydown',e=>{if(e.key==='Enter')runImport();});
+$('mImpCancel').addEventListener('click',resetReview);
+$('mImpAdd').addEventListener('click',()=>{
+  if(!IMP.items.length)return;
+  const allow=!!getSettings().allowDuplicates;let pl;
+  if($('mImpTarget').value==='new'){const nm=($('mImpName').value.trim()||'İçe aktarılan liste').slice(0,40);pl={id:'pl_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),name:nm,trackIds:[],items:[]};meta.playlists.push(pl);}
+  else pl=meta.playlists.find(p=>p.id===$('mImpTarget').value)||activePl();
+  let added=0,dups=0;
+  IMP.items.forEach(x=>{
+    if(x.src==='spotify_playlist'){
+      if(!allow&&pl.items.some(y=>y.src==='spotify_playlist'&&y.extId===x.extId)){dups++;return;}
+      pl.items.push({iid:newIid(),src:'spotify_playlist',extId:x.extId,title:x.title,artist:''});added++;return;
+    }
+    if(!allow&&pl.items.some(y=>y.src===x.src&&y.extId===x.extId)){dups++;return;}
+    pl.items.push({iid:newIid(),src:x.src,extId:x.extId,title:x.title,artist:x.artist,prefer:'external'});added++;
+  });
+  meta.activePlaylistId=pl.id;saveMeta();P.queueKey='';resetReview();$('mImpBox').classList.add('hide');renderAll();warn(added+' öğe eklendi'+(dups?' · '+dups+' yinelenen atlandı':'')+'.');
+});
+
+window.addEventListener('storage',async e=>{if(e.key!==META_KEY||!e.newValue)return;try{const p=JSON.parse(e.newValue);if(p&&Array.isArray(p.playlists)&&p.playlists.length){meta=Object.assign(meta,p);migrate();await loadTracks();P.queueKey='';renderAll();}}catch(x){}});
+
+(async function init(){
+  const cb=takeSpotifyCallback();
+  setDrawer(false);resetProgress();loadMeta();
+  await openDB();await loadTracks();reconcile();
+  isStorageLoaded=true;saveMeta();
+  let initId=null;
+  if(meta.lastItemId){const f=findItem(meta.lastItemId);if(f&&resolveItem(f.it))initId=meta.lastItemId;}
+  if(!initId){const pl=activePl().items.filter(x=>resolveItem(x));if(pl.length)initId=pl[0].iid;}
+  if(initId)selectItem(initId,false);else renderAll();
+  if(cb)await finishSpotifyCallback(cb);
+})();
+})();
+</script>
+</body>
+</html>
