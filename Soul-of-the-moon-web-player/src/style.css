@@ -1,0 +1,65 @@
+/*
+  Soul of the moon
+  Copyright (C) 2026
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License
+  as published by the Free Software Foundation, either
+  version 3 of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see:
+  https://www.gnu.org/licenses/gpl-3.0.html
+*/
+:root{--turq:#c5e1e2;--must:#e6cf98;--beige:#ece7df;--bg:#faf9f7;--ink:#3a3a3a;--muted:#787570}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Cormorant Garamond',Georgia,serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+main{width:100%;max-width:520px}.hide{display:none!important}
+.m-bar{padding:18px 20px;border:1.5px solid var(--ink);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(58,58,58,.05)}
+.m-mini{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.m-title-wrap{flex:1;min-width:0;cursor:pointer}
+.m-now{font-size:1.3rem;font-style:italic;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-sub{font-size:.98rem;font-style:italic;color:var(--muted)}
+.m-ctrls{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.m-icon{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:11px;padding:6px 10px;font-family:inherit;font-style:italic;font-size:1.05rem;cursor:pointer}
+.m-icon.play{background:var(--turq);font-weight:500;padding:6px 14px}
+.m-icon.active{background:var(--must)}.m-icon:hover{opacity:.85}
+.m-prog-row{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:.95rem;color:var(--muted)}
+.m-range{-webkit-appearance:none;width:100%;height:5px;background:var(--beige);border-radius:6px;outline:none;cursor:pointer;border:none;padding:0}
+.m-range:disabled{opacity:.55;cursor:default}
+.m-range::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--turq);border:1.5px solid var(--ink);cursor:pointer}
+.m-range::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--turq);border:1.5px solid var(--ink);cursor:pointer}
+.m-drawer{margin-top:16px;padding-top:14px;border-top:1px dashed #ccc7be}
+.m-pl-head{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.m-select{flex:1;min-width:130px;font-family:inherit;font-style:italic;font-size:1.08rem;padding:6px 10px;border:1px solid var(--ink);border-radius:11px;background:#fff;color:var(--ink)}
+.m-upload-lbl{display:inline-flex;align-items:center;justify-content:center;background:var(--turq);border:1px solid var(--ink);border-radius:11px;padding:6px 12px;font-size:1.05rem;font-style:italic;cursor:pointer}
+.m-warn{margin:8px 0;padding:8px 12px;border-radius:11px;background:#fbf4e4;border:1px solid var(--must);color:#6b531c;font-size:.98rem;font-style:italic}
+.m-tracks{max-height:280px;overflow-y:auto;margin:10px 0 0;padding:0;list-style:none;border-top:1px solid #efece6}
+.m-tracks li{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px solid #f4f1ec;font-size:1.08rem;gap:8px;flex-wrap:wrap}
+.m-track-name{flex:1 1 130px;min-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-style:italic}
+.m-track-name.playing{font-weight:500;background:linear-gradient(transparent 60%,var(--must) 60%);padding:0 4px;border-radius:4px}
+.m-track-acts{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+.m-tag-btn{border:1px solid #d5d0c7;background:#fff;border-radius:8px;padding:2px 7px;font-size:.86rem;font-family:inherit;font-style:italic;cursor:pointer;color:var(--ink)}
+.m-tag-btn:hover{border-color:var(--ink)}
+a.m-tag-btn{text-decoration:none;display:inline-block}
+.m-inline-edit{display:flex;gap:6px;margin-bottom:8px}
+.m-inline-edit input{flex:1;font-family:inherit;font-size:1.05rem;font-style:italic;padding:6px 10px;border-radius:11px;border:1px solid var(--ink);background:#fff;color:var(--ink)}
+.m-empty{padding:14px 4px 6px;text-align:center;font-style:italic;color:var(--muted)}
+.m-badge{font-size:.72rem;font-style:normal;padding:1px 6px;border-radius:8px;border:1px solid #d5d0c7;background:var(--beige);flex-shrink:0}
+.m-badge.sp{background:var(--turq)}
+.m-ext{margin-top:14px}
+.m-ext-note{font-size:.95rem;font-style:italic;color:var(--muted);margin-bottom:6px}
+.m-sp{width:100%;min-height:152px;border-radius:11px;overflow:hidden}
+.m-ext-open{display:inline-block;margin-top:6px;font-size:.98rem;font-style:italic;color:var(--ink)}
+.m-panel{margin:8px 0;padding:10px 12px;border:1px solid #d5d0c7;border-radius:12px;background:#fff}
+.m-panel h4{margin:0 0 6px;font-weight:500;font-style:italic;font-size:1.12rem}
+.m-note{font-size:.93rem;font-style:italic;color:var(--muted);margin:4px 0 8px;line-height:1.3}
+.m-field{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;font-size:.95rem;font-style:italic;color:var(--muted)}
+.m-field input{font-family:inherit;font-size:1.02rem;font-style:italic;padding:6px 10px;border:1px solid var(--ink);border-radius:11px;background:#fff;color:var(--ink);width:100%}
+.m-check{display:flex;gap:8px;align-items:center;font-size:1rem;font-style:italic;margin:4px 0 8px}
+.m-tools{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+@media(max-width:420px){body{padding:10px}.m-bar{padding:14px 12px}.m-now{font-size:1.12rem}}

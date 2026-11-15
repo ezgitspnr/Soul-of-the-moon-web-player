@@ -1,0 +1,112 @@
+<!--
+  Soul of the moon
+  Copyright (C) 2026
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License
+  as published by the Free Software Foundation, either
+  version 3 of the License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see:
+  https://www.gnu.org/licenses/gpl-3.0.html
+-->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<title>Soul of the moon</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+<section id="musicBox" class="m-bar" aria-label="Müzik Oynatıcı">
+  <div class="m-mini">
+    <div class="m-title-wrap" id="mTitleArea" title="Şarkı listesini aç/kapat">
+      <div class="m-now" id="mNowTitle">buralar dutluk</div>
+      <div class="m-sub" id="mNowSub">Listeyi açmak için sağdaki oka dokunun</div>
+    </div>
+    <div class="m-ctrls">
+      <button type="button" class="m-icon" id="mShuffle" title="Karışık">⇄</button>
+      <button type="button" class="m-icon" id="mRepeat" title="Tekrar">↻</button>
+      <button type="button" class="m-icon" id="mPrev" title="Önceki">‹‹</button>
+      <button type="button" class="m-icon play" id="mPlay">oynat</button>
+      <button type="button" class="m-icon" id="mNext" title="Sonraki">››</button>
+      <button type="button" class="m-icon" id="mArrowBtn" aria-expanded="false" title="Liste">▼</button>
+    </div>
+  </div>
+  <div class="m-prog-row">
+    <span id="mCurTime">00:00</span>
+    <input type="range" id="mSeek" class="m-range" min="0" max="0" value="0" step="0.1">
+    <span id="mDurTime">00:00</span>
+  </div>
+  <div id="mExt" class="m-ext hide">
+    <div id="mExtNote" class="m-ext-note"></div>
+    <div id="mSpWrap" class="m-sp hide"><div id="mSpHost"></div></div>
+    <a id="mExtOpen" class="m-ext-open hide" target="_blank" rel="noopener noreferrer">orijinali aç</a>
+  </div>
+  <div id="mDrawer" class="m-drawer hide">
+    <div class="m-pl-head">
+      <select id="mPlSelect" class="m-select"></select>
+      <button type="button" class="m-icon" id="mNewPlBtn">+ liste</button>
+      <button type="button" class="m-icon" id="mRenPlBtn">adlandır</button>
+      <button type="button" class="m-icon" id="mDelPlBtn">sil</button>
+      <label class="m-upload-lbl" for="mFileInp">+ dosya ekle
+        <input type="file" id="mFileInp" accept=".flac,.mp3,.wav,.ogg,.m4a,.aac,audio/*" multiple class="hide">
+      </label>
+    </div>
+    <div id="mPlInputBox" class="m-inline-edit hide">
+      <input type="text" id="mPlNameInp" maxlength="40" placeholder="liste adı...">
+      <button type="button" class="m-icon play" id="mPlSaveBtn">kaydet</button>
+      <button type="button" class="m-icon" id="mPlCancelBtn">iptal</button>
+    </div>
+    <div class="m-tools">
+      <button type="button" class="m-icon" id="mImpBtn">spotify içe aktar</button>
+      <button type="button" class="m-icon" id="mSetBtn">ayarlar</button>
+    </div>
+    <div id="mSetBox" class="m-panel hide">
+      <h4>Ayarlar</h4>
+      <div id="mEnvNote" class="m-note"></div>
+      <label class="m-field">Spotify Client ID (opsiyonel)<input type="text" id="mSetSpId" autocomplete="off" spellcheck="false"></label>
+      <label class="m-field">Spotify Redirect URI<input type="text" id="mSetSpRedir" autocomplete="off" spellcheck="false"></label>
+      <label class="m-check"><input type="checkbox" id="mSetDup"> yinelenen girdilere izin ver</label>
+      <div class="m-note">Client ID girmezseniz Spotify çalma listeleri <strong>gömülü oynatıcı</strong> olarak eklenir (30 sn önizleme; tarayıcıda Spotify oturumu açıksa tam parça). Client ID girip yetkilendirirseniz liste parça parça çekilir. file:// ile Spotify çalışmaz; http://127.0.0.1 veya HTTPS kullanın.</div>
+      <div class="m-inline-edit">
+        <button type="button" class="m-icon play" id="mSetSave">kaydet</button>
+        <button type="button" class="m-icon" id="mSetClear">temizle</button>
+        <button type="button" class="m-icon" id="mSetClose">kapat</button>
+      </div>
+    </div>
+    <div id="mImpBox" class="m-panel hide">
+      <h4>Spotify çalma listesi ekle</h4>
+      <div class="m-inline-edit">
+        <input type="text" id="mImpUrl" placeholder="https://open.spotify.com/playlist/..." autocomplete="off" spellcheck="false">
+        <button type="button" class="m-icon play" id="mImpGo">getir</button>
+      </div>
+      <div id="mImpStatus" class="m-note"></div>
+      <div id="mImpCommit" class="hide">
+        <label class="m-field">Hedef liste<select id="mImpTarget"></select></label>
+        <label class="m-field hide" id="mImpNameWrap">Yeni liste adı<input type="text" id="mImpName" maxlength="40"></label>
+        <div class="m-inline-edit">
+          <button type="button" class="m-icon play" id="mImpAdd">ekle</button>
+          <button type="button" class="m-icon" id="mImpCancel">vazgeç</button>
+        </div>
+      </div>
+    </div>
+    <div id="mWarn" class="m-warn hide" role="status" aria-live="polite"></div>
+    <ul id="mTrackList" class="m-tracks"></ul>
+  </div>
+</section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
