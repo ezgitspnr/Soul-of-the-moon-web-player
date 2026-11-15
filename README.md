@@ -2,8 +2,8 @@
 HTML tabanlı müzik oynatıcı
 Soul of the moon
 
-Canlı sürüm: https://ezgitspnr.github.io/Soul-of-the-moon-web-playet/
-
+* bu kısımları mecburen claude'a yazdırmak zorunda kaldım. yeteneklerimin de bir sınırı ve kapasitesi var...*
+* 
 Mobil görünüm
 
 Özellikler
